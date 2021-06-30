@@ -1,3 +1,4 @@
+import sys
 import psycopg2
 import secrets
 import json
@@ -12,7 +13,7 @@ def postgresqlConnection(dbJsonData):
     
     
     try:
-        conn =  psycopg2.connect(user=USR, passwd=PASSWD,host=ENDPOINT, port=PORT, database=DBNAME)
+        conn =  psycopg2.connect(user=USR, password=PASSWD,host=ENDPOINT, port=PORT, database=DBNAME)
         cur = conn.cursor()
         cur.execute("""SELECT * FROM Employee""")
         myresult = cur.fetchall()
@@ -23,7 +24,7 @@ def postgresqlConnection(dbJsonData):
     except Exception as e:
         print("Database connection failed due to {0}".format(e))  
     finally:
-      if conn.is_connected():
+      if conn is not None:
         conn.close()
         cur.close()
         print("Postgress connection is closed")
@@ -33,3 +34,5 @@ region_name = "us-west-2"
 
 dbInfoString = secrets.get_secret(secret_name, region_name)
 print ( dbInfoString )
+dbJsonData = json.loads(dbInfoString)
+postgresqlConnection(dbJsonData)
